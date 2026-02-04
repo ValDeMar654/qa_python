@@ -23,7 +23,17 @@ class TestBooksCollector:
         collector.add_new_book('Что делать, если ваш кот хочет вас убить')
         assert len(collector.books_genre) == 2
 
-    @pytest.mark.parametrize('book', ['', 'Z' * 50])
+    def test_add_new_book_add_two_same_books(self, collector):
+        collector.add_new_book('Гордость и предубеждение и зомби')
+        collector.add_new_book('Гордость и предубеждение и зомби')
+        assert len(collector.books_genre) == 1
+
+    @pytest.mark.parametrize('book', ['Z', 'Z' * 40, 'Z' * 40])
+    def test_add_new_book_with_valid_name(self, collector, book):
+        collector.add_new_book(book)
+        assert book in collector.books_genre
+
+    @pytest.mark.parametrize('book', ['', 'Z' * 41, 'Z' * 50])
     def test_add_new_book_with_invalid_name(self, collector, book):
         collector.add_new_book(book)
         assert book not in collector.books_genre
@@ -99,6 +109,11 @@ class TestBooksCollector:
         collector.add_book_in_favorites(
             'Что делать, если ваш кот хочет вас убить')
         assert len(collector.favorites) == 1
+
+    def test_add_book_in_favorites_book_not_in_books_genre(self, collector):
+        collector.add_book_in_favorites(
+            'Что делать, если ваш кот хочет вас убить')
+        assert len(collector.favorites) == 0
 
     def test_delete_book_from_favorites_add_two_del_one_one_in_list(self,
                                                                     collector):
